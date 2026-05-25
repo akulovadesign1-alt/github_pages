@@ -2268,15 +2268,16 @@ try{
   var _ls=JSON.parse(localStorage.getItem('hotel_ud_v10')||'{}');
   if(__BAKED_UD){
     if(__BAKED_UD._ts){
-      // Both have timestamps — use whichever is newer
-      UD = (_ls._ts && _ls._ts > __BAKED_UD._ts) ? _ls : __BAKED_UD;
+      // Prefer localStorage when it has data with same or newer timestamp
+      UD = (_ls._ts && _ls._ts >= __BAKED_UD._ts) ? _ls : __BAKED_UD;
     } else {
-      // Old baked file without timestamp — prefer localStorage if it has any data
       UD = (Object.keys(_ls).length > 0) ? _ls : __BAKED_UD;
     }
   } else {
     UD = _ls;
   }
+  // Always bump timestamp so localStorage stays newer than the HTML file on next refresh
+  UD._ts = Date.now();
   localStorage.setItem('hotel_ud_v10',JSON.stringify(UD));
 }catch{}
 var CNY_RATE = parseFloat(UD.cnyRate || 4.8);
