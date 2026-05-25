@@ -3540,6 +3540,92 @@ function _initTabDrag(){
   });
 }
 
+function pushToGitHub(htmlContent) {
+  var token = localStorage.getItem('_gh_token');
+  if (!token) {
+    token = prompt(
+      'GitHub Token для публикации сайта (нужен 1 раз на каждый браузер).\n\n' +
+      'Как создать:\n' +
+      '1. Зайдите на github.com -> Settings -> Developer settings\n' +
+      '   -> Personal access tokens -> Tokens (classic)\n' +
+      '2. Generate new token -> выбрать права repo -> Generate\n' +
+      '3. Скопируйте токен и вставьте сюда:'
+    );
+    if (!token) return;
+    localStorage.setItem('_gh_token', token.trim());
+    token = token.trim();
+  }
+
+  var saveBar = document.getElementById('save-bar');
+  var ut = document.getElementById('unsaved-txt');
+  saveBar.style.display = 'flex';
+  ut.textContent = 'Публикую на сайт...';
+
+  var owner = 'akulovadesign1-alt';
+  var repo = 'github_pages';
+  var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/index.html';
+
+  var base = 'https://' + owner + '.github.io/' + repo + '/';
+  var ghHtml = htmlContent
+    .replace(/"imgs\//g, '"' + base + 'https://akulovadesign1-alt.github.io/github_pages/imgs/')
+    .replace(/'imgs\//g, "'" + base + 'https://akulovadesign1-alt.github.io/github_pages/imgs/')
+    .replace(/"files\//g, '"' + base + 'https://akulovadesign1-alt.github.io/github_pages/files/')
+    .replace(/'files\//g, "'" + base + 'https://akulovadesign1-alt.github.io/github_pages/files/');
+
+  function toBase64(str) {
+    var bytes = new TextEncoder().encode(str);
+    var binary = '';
+    var chunkSize = 8192;
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, bytes.length)));
+    }
+    return btoa(binary);
+  }
+
+  var encoded;
+  try { encoded = toBase64(ghHtml); }
+  catch(e) {
+    ut.textContent = 'Ошибка кодирования: ' + e.message;
+    setTimeout(function(){ saveBar.style.display = 'none'; }, 5000);
+    return;
+  }
+
+  var hdrs = {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json'
+  };
+
+  fetch(apiUrl, { headers: hdrs })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var sha = data.sha || '';
+      var stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      return fetch(apiUrl, {
+        method: 'PUT',
+        headers: hdrs,
+        body: JSON.stringify({ message: 'Save ' + stamp, content: encoded, sha: sha })
+      });
+    })
+    .then(function(r){
+      if (r.ok) {
+        ut.textContent = 'Сохранено и опубликовано! Обновится через ~1 мин';
+        setTimeout(function(){ saveBar.style.display = 'none'; }, 6000);
+      } else {
+        return r.json().then(function(e){ throw new Error(e.message || ('HTTP ' + r.status)); });
+      }
+    })
+    .catch(function(err){
+      var msg = err.message || String(err);
+      if (msg.indexOf('401') >= 0 || msg.indexOf('Bad credentials') >= 0) {
+        localStorage.removeItem('_gh_token');
+        msg += '. Токен удален - введите заново при следующем сохранении.';
+      }
+      ut.textContent = 'Ошибка: ' + msg;
+      setTimeout(function(){ saveBar.style.display = 'none'; }, 7000);
+    });
+}
+
 function saveFile(){
   var html = document.documentElement.outerHTML;
   // Bake current user data (photos, settings) into the saved file
@@ -3552,7 +3638,7 @@ function saveFile(){
   a.download = 'hotel_unique_' + date + '.html';
   a.click();
   URL.revokeObjectURL(a.href);
-  document.getElementById('save-bar').style.display='none';
+  pushToGitHub(html);
 }
 
 
