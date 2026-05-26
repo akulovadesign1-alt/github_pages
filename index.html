@@ -1,4 +1,4 @@
-<html lang="ru"><head><base href="file:///C:/Users/User/Downloads/hotel_site/">
+﻿<html lang="ru"><head><base href="file:///C:/Users/User/Downloads/hotel_site/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>UNIQUE — Комплектация</title>
@@ -4047,6 +4047,7 @@ function getCnyUnit(name) {
   if (nm.includes('тюль') || nm.includes('вуаль')) return _ci('Шторы и карнизы', 2);
   if (nm.includes('карниз') && (nm.includes('штор') || nm.includes('метал'))) return _ci('Шторы и карнизы', 3);
   if (nm.includes('крючки') && nm.includes('штор')) return _ci('Шторы и карнизы', 4);
+  if (nm.includes('шторка') && nm.includes('душ')) return _ci('Шторы и карнизы', 5);
   // Bedding
   if (nm.includes('пуходеяльник') || (nm.includes('постельное') && nm.includes('бел'))) return _ci('Постельное бельё и полотенца', 1);
   if (nm.includes('простын') && nm.includes('резинк') && nm.includes('180')) return _ci('Постельное бельё и полотенца', 3);
@@ -4062,6 +4063,10 @@ function getCnyUnit(name) {
   if (nm.includes('банн') && nm.includes('полотенц')) return _ci('Постельное бельё и полотенца', 15);
   if (nm.includes('полотенц') && nm.includes('рук')) return _ci('Постельное бельё и полотенца', 16);
   if (nm.includes('полотенц') && nm.includes('лиц')) return _ci('Постельное бельё и полотенца', 17);
+  if (nm.includes('пляжн') && nm.includes('полотенц')) return _ci('Постельное бельё и полотенца', 18);
+  if (nm.includes('коврик') && (nm.includes('ванн') || nm.includes('ног'))) return _ci('Постельное бельё и полотенца', 19);
+  if ((nm.includes('антискольз') || nm.includes('crystal')) && nm.includes('коврик')) return _ci('Постельное бельё и полотенца', 20);
+  if (nm.includes('коврик') && nm.includes('душ')) return _ci('Постельное бельё и полотенца', 20);
   // Furniture
   if ((nm.includes('диван') && nm.includes('складн')) || (nm.includes('диван') && !nm.includes('приставн'))) return _ci('Мебель и декор', 1);
   if (nm.includes('кресло') && nm.includes('вращ')) return _ci('Мебель и декор', 2);
@@ -4072,6 +4077,7 @@ function getCnyUnit(name) {
   if (nm.includes('кровать') && (nm.includes('6 фут') || nm.includes('6 ф'))) return _ci('Мебель и декор', 7);
   if (nm.includes('кровать') && (nm.includes('3,5') || nm.includes('3.5'))) return _ci('Мебель и декор', 8);
   if ((nm.includes('прикроватн') && nm.includes('стол')) || (nm.includes('тумб') && nm.includes('прикроватн'))) return _ci('Мебель и декор', 9);
+  if (nm.includes('обеденн') && nm.includes('стол')) return _ci('Мебель и декор', 15);
   // Doors
   if (nm.includes('дверь') || nm.includes('двер ')) {
     if (nm.includes('санузл') || nm.includes('ванн') || nm.includes('влаг')) return _ci('Двери', 2);
@@ -4083,7 +4089,10 @@ function getCnyUnit(name) {
   // Lights
   if (nm.includes('подвесн') && nm.includes('санузл')) return _ci('Освещение', 1);
   if (nm.includes('подвесн') && nm.includes('бар')) return _ci('Освещение', 5);
-  if (nm.includes('настенн') && nm.includes('коридор')) return _ci('Освещение', 8);
+  if (nm.includes('подвесн') && (nm.includes('тумб') || nm.includes('ящик'))) return _ci('Освещение', 2);
+  if (nm.includes('потолочн') || (nm.includes('подвесн') && (nm.includes('спальн') || nm.includes('прихожей')))) return _ci('Освещение', 4);
+  if (nm.includes('настенн') && nm.includes('кроват')) return _ci('Освещение', 6);
+  if (nm.includes('настенн') && (nm.includes('коридор') || nm.includes('прихожей'))) return _ci('Освещение', 8);
   return null;
 }
 // ── CNY section maps ──
